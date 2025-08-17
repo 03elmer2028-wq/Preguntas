@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario UNT 2024-I - Área A</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        
+        .option-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div id="quiz-container" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden">
+            
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 text-center">
+                <div class="flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        <h1 class="text-3xl font-bold">Cuestionario UNT 2024-I</h1>
+                        <p class="text-blue-100">Examen de Admisión - Área A</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Content -->
+            <div id="quiz-content" class="p-8">
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-sm text-gray-600" id="question-counter">Pregunta 1 de 5</span>
+                        <span class="text-sm text-gray-600" id="answered-counter">0/5 respondidas</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full progress-bar" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <!-- Question -->
+                <div id="question-section" class="question-card fade-in">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4" id="question-title"></h2>
+                        <div id="question-details" class="bg-gray-50 p-4 rounded-lg mb-4 hidden"></div>
+                        <div id="question-subtext" class="text-blue-700 font-semibold mb-4 hidden"></div>
+                    </div>
+                    
+                    <div id="options-container" class="space-y-3 mb-8">
+                        <!-- Options will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center">
+                    <button id="prev-btn" class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                        ← Anterior
+                    </button>
+                    
+                    <button id="next-btn" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
+                        Siguiente →
+                    </button>
+                    
+                    <button id="submit-btn" class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden">
+                        Ver Resultados
+                    </button>
+                </div>
+
+                <div id="incomplete-warning" class="text-center text-sm text-gray-500 mt-4 hidden">
+                    Responde todas las preguntas para ver tus resultados
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="p-8 hidden">
+                <div class="text-center mb-8">
+                    <div class="flex items-center justify-center mb-4">
+                        <svg class="w-16 h-16 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">¡Cuestionario Completado!</h2>
+                    <p class="text-gray-600">Examen de Admisión UNT 2024-I - Área A</p>
+                </div>
+                
+                <div class="text-center mb-8">
+                    <div id="final-score" class="text-5xl font-bold mb-2"></div>
+                    <p id="score-message" class="text-xl text-gray-600 mb-4"></p>
+                </div>
+
+                <div id="detailed-results" class="space-y-6 mb-8">
+                    <!-- Detailed results will be inserted here -->
+                </div>
+
+                <div class="text-center">
+                    <button id="restart-btn" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center mx-auto transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/>
+                        </svg>
+                        Reiniciar Cuestionario
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data
+        const questions = [
+            {
+                number: 60,
+                question: "Músculo que es esencialmente inspirador, al contraerse desciende aumentando el volumen del tórax:",
+                options: ["diafragma", "deltoides", "subescapular", "trapecio", "esplenio"],
+                correct: 0,
+                explanation: "El diafragma es el principal músculo inspirador. Al contraerse, desciende y aumenta el volumen de la cavidad torácica, lo que permite la entrada de aire a los pulmones."
+            },
+            {
+                number: 61,
+                question: "Weissman sostenía que, para que una característica sea transmitida a la descendencia, esta debe afectar al material genético de las células germinales, con lo cual refuta al científico:",
+                options: ["Darwin", "Lamarck", "De Vries", "Cuvier", "Linneo"],
+                correct: 1,
+                explanation: "Weissman refutó la teoría de Lamarck sobre la herencia de caracteres adquiridos, estableciendo que solo las características que afectan a las células germinales pueden transmitirse a la descendencia."
+            },
+            {
+                number: 62,
+                question: "La estructura del cloroplasto, donde se localizan las enzimas que participan en el ciclo de Calvin - Benson es:",
+                options: ["la membrana interna", "la membrana externa", "la membrana tilacoidal", "la matriz acuosa o estroma", "el espacio intratilacoide"],
+                correct: 3,
+                explanation: "El estroma es la matriz acuosa del cloroplasto donde se encuentran las enzimas necesarias para el ciclo de Calvin-Benson (fase oscura de la fotosíntesis)."
+            },
+            {
+                number: 63,
+                question: "Son enfermedades que se presentan por disfunción del cerebelo:",
+                details: "1. Ataxia\n2. Hipotonía\n3. Miopía\n4. Dismetría\n5. Presbicia",
+                subtext: "Son ciertas:",
+                options: ["1, 2 y 3", "2, 3 y 4", "3, 4 y 5", "1, 2 y 4", "solo 3 y 5"],
+                correct: 3,
+                explanation: "La disfunción del cerebelo causa: Ataxia (falta de coordinación), Hipotonía (disminución del tono muscular) y Dismetría (alteración en la medida de los movimientos). Miopía y Presbicia son trastornos visuales."
+            },
+            {
+                number: 64,
+                question: "Durante el parto, las primeras contracciones uterinas son estimuladas por la hormona:",
+                options: ["luteinizante", "antidiurética", "progesterona", "oxitocina", "prolactina"],
+                correct: 3,
+                explanation: "La oxitocina es la hormona responsable de estimular las contracciones uterinas durante el parto y también participa en la eyección de leche durante la lactancia."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestion = 0;
+        let selectedAnswers = {};
+        let showResults = false;
+
+        // DOM elements
+        const questionCounter = document.getElementById('question-counter');
+        const answeredCounter = document.getElementById('answered-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const questionTitle = document.getElementById('question-title');
+        const questionDetails = document.getElementById('question-details');
+        const questionSubtext = document.getElementById('question-subtext');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const incompleteWarning = document.getElementById('incomplete-warning');
+        const quizContent = document.getElementById('quiz-content');
+        const resultsSection = document.getElementById('results-section');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Initialize quiz
+        function initQuiz() {
+            displayQuestion();
+            updateNavigation();
+        }
+
+        // Display current question
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            
+            questionCounter.textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
+            answeredCounter.textContent = `${Object.keys(selectedAnswers).length}/${questions.length} respondidas`;
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            questionTitle.textContent = `PREGUNTA N.º ${question.number}. ${question.question}`;
+            
+            // Handle details
+            if (question.details) {
+                questionDetails.textContent = question.details;
+                questionDetails.classList.remove('hidden');
+            } else {
+                questionDetails.classList.add('hidden');
+            }
+            
+            // Handle subtext
+            if (question.subtext) {
+                questionSubtext.textContent = question.subtext;
+                questionSubtext.classList.remove('hidden');
+            } else {
+                questionSubtext.classList.add('hidden');
+            }
+            
+            // Display options
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = `option-btn w-full text-left p-4 rounded-lg border-2 transition-all ${
+                    selectedAnswers[currentQuestion] === index
+                        ? 'border-blue-600 bg-blue-50 text-blue-800'
+                        : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                }`;
+                
+                button.innerHTML = `
+                    <span class="font-bold mr-3">${String.fromCharCode(65 + index)})</span>
+                    ${option}
+                `;
+                
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // Select answer
+        function selectAnswer(answerIndex) {
+            selectedAnswers[currentQuestion] = answerIndex;
+            displayQuestion();
+            updateNavigation();
+        }
+
+        // Update navigation
+        function updateNavigation() {
+            prevBtn.disabled = currentQuestion === 0;
+            
+            const allAnswered = Object.keys(selectedAnswers).length === questions.length;
+            
+            if (currentQuestion === questions.length - 1) {
+                nextBtn.classList.add('hidden');
+                submitBtn.classList.remove('hidden');
+                submitBtn.disabled = !allAnswered;
+                
+                if (!allAnswered) {
+                    incompleteWarning.classList.remove('hidden');
+                } else {
+                    incompleteWarning.classList.add('hidden');
+                }
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+                incompleteWarning.classList.add('hidden');
+            }
+        }
+
+        // Calculate score
+        function calculateScore() {
+            let correct = 0;
+            questions.forEach((question, index) => {
+                if (selectedAnswers[index] === question.correct) {
+                    correct++;
+                }
+            });
+            return correct;
+        }
+
+        // Show results
+        function showResultsPage() {
+            const score = calculateScore();
+            const percentage = Math.round((score / questions.length) * 100);
+            
+            quizContent.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            // Score display
+            const finalScore = document.getElementById('final-score');
+            const scoreMessage = document.getElementById('score-message');
+            
+            finalScore.textContent = `${score}/${questions.length}`;
+            
+            if (score >= 4) {
+                finalScore.className = 'text-5xl font-bold mb-2 text-green-600';
+                scoreMessage.textContent = '¡Excelente! Dominas muy bien estos temas 🎉';
+            } else if (score >= 3) {
+                finalScore.className = 'text-5xl font-bold mb-2 text-yellow-600';
+                scoreMessage.textContent = '¡Bien! Tienes una buena comprensión 👍';
+            } else {
+                finalScore.className = 'text-5xl font-bold mb-2 text-red-600';
+                scoreMessage.textContent = 'Necesitas repasar estos temas importantes 📚';
+            }
+            
+            // Detailed results
+            const detailedResults = document.getElementById('detailed-results');
+            detailedResults.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const isCorrect = selectedAnswers[index] === question.correct;
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'border rounded-lg p-6';
+                
+                resultDiv.innerHTML = `
+                    <h3 class="font-semibold mb-3 text-lg">
+                        Pregunta ${question.number}. ${question.question}
+                    </h3>
+                    
+                    ${question.details ? `
+                        <div class="bg-gray-50 p-3 rounded mb-3 text-sm whitespace-pre-line">
+                            ${question.details}
+                        </div>
+                    ` : ''}
+                    
+                    ${question.subtext ? `
+                        <p class="font-medium mb-3 text-blue-700">${question.subtext}</p>
+                    ` : ''}
+                    
+                    <div class="space-y-2 mb-4">
+                        ${question.options.map((option, optIndex) => `
+                            <div class="flex items-center p-3 rounded ${
+                                optIndex === question.correct 
+                                    ? 'bg-green-100 border-green-300 border-2' 
+                                    : selectedAnswers[index] === optIndex 
+                                    ? 'bg-red-100 border-red-300 border-2'
+                                    : 'bg-gray-50 border border-gray-200'
+                            }">
+                                ${optIndex === question.correct ? `
+                                    <svg class="text-green-600 mr-3 flex-shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                                    </svg>
+                                ` : selectedAnswers[index] === optIndex ? `
+                                    <svg class="text-red-600 mr-3 flex-shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                                    </svg>
+                                ` : ''}
+                                <span class="font-medium mr-3 ${
+                                    optIndex === question.correct ? 'text-green-800' :
+                                    selectedAnswers[index] === optIndex ? 'text-red-800' : 'text-gray-700'
+                                }">
+                                    ${String.fromCharCode(65 + optIndex)})
+                                </span>
+                                <span class="${
+                                    optIndex === question.correct ? 'text-green-800 font-medium' :
+                                    selectedAnswers[index] === optIndex ? 'text-red-800' : 'text-gray-700'
+                                }">
+                                    ${option}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-4">
+                        <p class="text-blue-800 text-sm">
+                            <strong>Explicación:</strong> ${question.explanation}
+                        </p>
+                    </div>
+                `;
+                
+                detailedResults.appendChild(resultDiv);
+            });
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            currentQuestion = 0;
+            selectedAnswers = {};
+            showResults = false;
+            
+            resultsSection.classList.add('hidden');
+            quizContent.classList.remove('hidden');
+            
+            displayQuestion();
+            updateNavigation();
+        }
+
+        // Event listeners
+        prevBtn.onclick = () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+                updateNavigation();
+            }
+        };
+
+        nextBtn.onclick = () => {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+                updateNavigation();
+            }
+        };
+
+        submitBtn.onclick = showResultsPage;
+        restartBtn.onclick = restartQuiz;
+
+        // Initialize
+        initQuiz();
+    </script>
+</body>
+</html>
